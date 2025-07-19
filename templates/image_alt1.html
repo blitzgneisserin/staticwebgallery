@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fotoansicht</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+        .photo-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .photo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+            border-radius: 6px;
+        }
+        .metadata {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .navigation {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        .navigation a {
+            margin: 0 1rem;
+            text-decoration: none;
+            color: #0066cc;
+        }
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="photo-container">
+        <img src="../images/{{ filename }}" alt="Foto">
+        <div class="metadata">
+            {%- if metadata.City %}<span>{{ metadata.City }}</span>{% endif -%}
+            {%- if metadata.State %}, <span>{{ metadata.State }}</span>{% endif -%}
+            {%- if metadata.Date %}, <span>{{ metadata.Date }}</span>{% endif %}
+        </div>
+        <div class="navigation">
+            {%- if prev_slug %}
+                <a href="{{ prev_slug }}-{{ tag_slug }}.html">← Vorheriges Bild</a>
+            {%- endif %}
+            {%- if next_slug %}
+                {% if prev_slug %} | {% endif %}
+                <a href="{{ next_slug }}-{{ tag_slug }}.html">Nächstes Bild →</a>
+            {%- endif %}
+        </div>
+    </div>
+</body>
+</html>

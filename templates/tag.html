@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fotos mit Tag "{{ tag }}"</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .image-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .image-card img {
+      width: 100%;
+      height: auto;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fotos mit Tag: "{{ tag }}"</h1>
+  <div class="gallery">
+    {% for image in images %}
+    <div class="image-card">
+      <a href="{{ image.slug }}-{{ tag | slugify }}.html">
+        <img src="images/{{ image.filename }}" alt="Bild {{ image.filename }}">
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

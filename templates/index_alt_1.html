@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html><head><title>Tag Cloud</title></head><body>
+<h1>Tag Cloud</h1>
+<ul>
+{% for tag in tags %}
+  <li><a href="{{ tag.slug }}.html">{{ tag.label }} ({{ tag.count }})</a></li>
+{% endfor %}
+</ul>
+</body></html>
