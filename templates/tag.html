@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Fotos mit Tag "{{ tag }}"</title>
+  <title>Photos with tag "{{ tag }}"</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,20 +27,21 @@
     }
     .image-card img {
       width: 100%;
-      height: auto;
-      max-height: 200px;
+      aspect-ratio: 1 / 1;
       object-fit: cover;
       border-radius: 4px;
+      display: block;
     }
+
   </style>
 </head>
 <body>
-  <h1>Fotos mit Tag: "{{ tag }}"</h1>
+  <h1>Photos with tag: "{{ tag }}"</h1>
   <div class="gallery">
     {% for image in images %}
     <div class="image-card">
       <a href="{{ image.slug }}-{{ tag | slugify }}.html">
-        <img src="images/{{ image.filename }}" alt="Bild {{ image.filename }}">
+        <img src="thumbs/{{ image.filename }}" alt="Bild {{ image.filename }}">
       </a>
     </div>
     {% endfor %}
