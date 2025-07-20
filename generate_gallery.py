@@ -6,28 +6,28 @@ from collections import defaultdict
 from slugify import slugify
 from jinja2 import Environment, FileSystemLoader
 
-# Verzeichnisse
+# Directories
 IMAGES_DIR = "images"
 OUTPUT_DIR = "output"
 TEMPLATES_DIR = "templates"
 
-# Metadatenfelder definieren
+# Define metadata fields
 METADATA_FIELDS = {
     "City": "City",
     "State": "Province-State",
     "Date": "DateTimeOriginal"
 }
 
-# Jinja2-Umgebung vorbereiten
+# Prepare Jinja2 environment
 env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
-env.filters['slugify'] = slugify  # slugify-Filter für Templates verfügbar machen
+env.filters['slugify'] = slugify  # Make the slugify filter available in templates
 
-# Sicherstellen, dass das Ausgabeverzeichnis existiert
+# Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def get_metadata(filepath):
-    """Liest definierte Metadaten und Keywords mit exiftool aus."""
+    """Reads defined metadata and keywords using exiftool."""
     result = subprocess.run(
         ["exiftool", "-j", filepath],
         capture_output=True,
@@ -35,14 +35,14 @@ def get_metadata(filepath):
     )
     data = json.loads(result.stdout)[0]
 
-    # Metadaten sammeln
+    # Collect metadata
     metadata = {
         key: data.get(field)
         for key, field in METADATA_FIELDS.items()
         if data.get(field)
     }
 
-    # Keywords auslesen
+    # Extract keywords
     keywords = data.get("Keywords")
     if isinstance(keywords, str):
         keywords = [keywords]
@@ -55,7 +55,7 @@ def get_metadata(filepath):
 
 
 def collect_images():
-    """Durchsucht das Image-Verzeichnis, liest Metadaten und gruppiert nach Tags."""
+    """Scans the images directory, reads metadata, and groups by tags."""
     tag_to_images = defaultdict(list)
 
     for filename in sorted(os.listdir(IMAGES_DIR)):
@@ -79,7 +79,7 @@ def collect_images():
 
 
 def render_index_page(tag_to_images):
-    """Erzeugt die Startseite mit Links zu allen Tags."""
+    """Generates the index page with links to all tags."""
     template = env.get_template("index.html")
     tags = [
         {
@@ -95,7 +95,7 @@ def render_index_page(tag_to_images):
 
 
 def render_tag_pages(tag_to_images):
-    """Erzeugt HTML-Seiten pro Tag mit Vorschaubildern."""
+    """Generates HTML pages per tag with thumbnail previews."""
     template = env.get_template("tag.html")
     for tag, images in tag_to_images.items():
         tag_str = str(tag)
@@ -107,7 +107,7 @@ def render_tag_pages(tag_to_images):
 
 
 def render_image_pages_per_tag(tag_to_images):
-    """Erzeugt Bildseiten mit Navigation innerhalb jedes Tags."""
+    """Generates individual image pages with navigation within each tag."""
     template = env.get_template("image.html")
 
     for tag, images in tag_to_images.items():
@@ -136,7 +136,7 @@ def render_image_pages_per_tag(tag_to_images):
 
 
 def copy_images():
-    """Kopiert alle Bilder in den output/images-Ordner."""
+    """Copies all images into the output/images folder."""
     output_images_dir = os.path.join(OUTPUT_DIR, "images")
     os.makedirs(output_images_dir, exist_ok=True)
 
@@ -147,13 +147,40 @@ def copy_images():
             shutil.copy2(src, dst)
 
 
+def generate_thumbnails():
+    """Generates square thumbnails (300x300) from images in the images directory using ImageMagick."""
+    thumbs_dir = os.path.join(OUTPUT_DIR, "thumbs")
+    os.makedirs(thumbs_dir, exist_ok=True)
+
+    for filename in os.listdir(IMAGES_DIR):
+        if not filename.lower().endswith((".jpg", ".jpeg", ".png")):
+            continue
+
+        input_path = os.path.join(IMAGES_DIR, filename)
+        output_path = os.path.join(thumbs_dir, filename)
+
+        # ImageMagick command: first resize the smaller side to 300, then crop to 300x300 centered
+        cmd = [
+            "convert",
+            input_path,
+            "-resize", "300x300^",     # Scale so that the shortest side is 300 and the other is >= 300
+            "-gravity", "center",      # Center the cropping area
+            "-extent", "300x300",      # Crop exactly to 300x300
+            "-quality", "67",          # Set output quality to 67%
+            output_path
+        ]
+
+        subprocess.run(cmd, check=True)
+
+
 def main():
     tag_to_images = collect_images()
     render_index_page(tag_to_images)
     render_tag_pages(tag_to_images)
     render_image_pages_per_tag(tag_to_images)
     copy_images()
-    print("Galerie erfolgreich generiert.")
+    generate_thumbnails()
+    print("Gallery successfully generated.")
 
 
 if __name__ == "__main__":
