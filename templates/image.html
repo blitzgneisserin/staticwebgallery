@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Fotoansicht</title>
+  <title>Single image view</title>
   <style>
     html, body {
       margin: 0;
@@ -67,11 +66,11 @@
 <body>
   <div class="navigation">
     {%- if prev_slug %}
-      <a href="{{ prev_slug }}-{{ tag_slug }}.html">← Vorheriges Bild</a>
+      <a href="{{ prev_slug }}-{{ tag_slug }}.html">← Previous</a>
     {%- endif %}
-    <a href="{{ tag_slug }}.html">Zurück zur Übersicht</a>
+    <a href="{{ tag_slug }}.html">Tag thumbs</a>
     {%- if next_slug %}
-      <a href="{{ next_slug }}-{{ tag_slug }}.html">Nächstes Bild →</a>
+      <a href="{{ next_slug }}-{{ tag_slug }}.html">Next →</a>
     {%- endif %}
   </div>
 
