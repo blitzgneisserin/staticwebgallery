@@ -1,4 +1,4 @@
-This is supposed to be a sophiticated static web gallery generator eventually.
+This is supposed to be a sophisticated static web gallery generator eventually.
 
 [Example web site](https://simon-a.info/staticwebgallery/output/).
 
